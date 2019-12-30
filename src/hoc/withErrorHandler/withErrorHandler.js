@@ -12,21 +12,27 @@ const withErrorHandler = (WrappedComponent, axios) => {
                 error: null
             }
 
-            axios.interceptors.request.use(req => {
+            // Creation of state variables on the fly. This is used to remove them in componentWillUnmount()
+            this.reqInterceptor = axios.interceptors.request.use(req => {
                 this.setState({error: null});
                 return req;
             })
-            axios.interceptors.response.use(res => res, error => {
+            this.resInterceptor = axios.interceptors.response.use(res => res, error => {
                 this.setState({error: error});
             });
+        }
 
+        // To prevent memory leaks with interceptors. (clean up interceptors)
+        componentWillUnmount () {
+            axios.interceptors.request.eject(this.reqInterceptor);
+            axios.interceptors.response.eject(this.resInterceptor);
         }
 
         // state = {
         //     error: null
         // }
 
-        // OK for post requests, but KO for Component Lifecycle (ex: getting ingredients)
+        // componentDidMount OK for post requests, but KO for Component Lifecycle (ex: getting ingredients)
         // Solution: use ComponentWillMount instead of componentDidMount
         // In fact, ComponentWillMount will be removed. Solution2: do it in Constructor.
         //componentDidMount() {
