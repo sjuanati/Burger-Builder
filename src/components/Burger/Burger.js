@@ -1,11 +1,15 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
 import styles from './Burger.module.css';
+
 
 // We don't pass an array through props, but an object, so we can't use map. 
 // We need to convert object to an array
 
 const burger = (props) => {
+
+    console.log(props);
 
     // Transform object into array of ingredients
     let transformedIngredients = Object.keys(props.ingredients)
@@ -33,4 +37,6 @@ const burger = (props) => {
     );
 }
 
-export default burger;
+// Even not needed, this would transfer history, match and location to Burger, even it is
+// not included in the routing (only direct components are routed, but not its children)
+export default withRouter(burger);
