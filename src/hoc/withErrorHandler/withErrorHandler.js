@@ -5,12 +5,13 @@ import Aux from '../Aux/Aux';
 const withErrorHandler = (WrappedComponent, axios) => {
     return class extends Component {
 
-        state = {
-            error: null
-        }
+        constructor(props) {
+            super(props);
 
-        componentDidMount() {
-            // Clear any errors when I send the request
+            this.state = {
+                error: null
+            }
+
             axios.interceptors.request.use(req => {
                 this.setState({error: null});
                 return req;
@@ -18,7 +19,27 @@ const withErrorHandler = (WrappedComponent, axios) => {
             axios.interceptors.response.use(res => res, error => {
                 this.setState({error: error});
             });
+
         }
+
+        // state = {
+        //     error: null
+        // }
+
+        // OK for post requests, but KO for Component Lifecycle (ex: getting ingredients)
+        // Solution: use ComponentWillMount instead of componentDidMount
+        // In fact, ComponentWillMount will be removed. Solution2: do it in Constructor.
+        //componentDidMount() {
+        // componentWillMount() {
+        //     // Clear any errors when I send the request
+        //     axios.interceptors.request.use(req => {
+        //         this.setState({error: null});
+        //         return req;
+        //     })
+        //     axios.interceptors.response.use(res => res, error => {
+        //         this.setState({error: error});
+        //     });
+        // }
 
         // Also clear the error when clicking the modal
         errorConfirmedHandler = () => {
