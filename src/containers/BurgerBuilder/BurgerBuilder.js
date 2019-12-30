@@ -3,7 +3,10 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
-import Aux from '../../hoc/Aux';
+import Aux from '../../hoc/Aux/Aux';
+import axios from '../../axios-orders';
+import Spinner from '../../components/UI/Spinner/Spinner';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 const INGREDIENT_PRICES = {
     salad: 0.5,
@@ -23,7 +26,8 @@ class BurgerBuilder extends Component {
         },
         totalPrice: 4,   // base price
         purchasable: false,
-        purchasing: false
+        purchasing: false,
+        loading: false
     }
 
     updatePurchaseState (ingredients) {
@@ -98,25 +102,57 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
-        alert('You continue!');
+        this.setState({ loading: true});
+        // In Production, price should be calculated on the server side, to make sure the user
+        // is not manipulating the price. Product prices should also be on the server side.
+        const order = {
+            ingredients: this.state.ingredients,
+            price: this.state.totalPrice,
+            customer: {
+                name: 'Marc Molins',
+                address: {
+                    street: 'Teststreet 15',
+                    zipCode: '12345',
+                    country: 'Catalonia'
+                },
+                email: 'test@test.cat'
+            },
+            deliveryMethod: 'fastest'
+        }
+        // Firebase expects json data
+        axios.post('/orders.json', order)
+            .then(response => {
+                this.setState({ loading: false, purchasing: false});
+            })
+            .catch(error => {
+                this.setState({ loading: false, purchasing: false});
+            });
     }
 
     render() {
         const disabledInfo = {
             ...this.state.ingredients
         };
+
         for (let key in disabledInfo) {
             // disable if value is <= 0
             disabledInfo[key] = disabledInfo[key] <= 0
         } // structure will be something like:  {salad: true, meat: false ...}
+
+        let orderSummary = <OrderSummary 
+            ingredients={this.state.ingredients}
+            price={this.state.totalPrice} 
+            purchaseCancelled={this.purchasedCancelHandler}
+            purchaseContinued={this.purchaseContinueHandler} />
+
+        if (this.state.loading) {
+            orderSummary = <Spinner />
+        }
+
         return (
             <Aux>
                 <Modal show={this.state.purchasing} modalClosed={this.purchasedCancelHandler}> 
-                    <OrderSummary 
-                        ingredients={this.state.ingredients}
-                        price={this.state.totalPrice} 
-                        purchaseCancelled={this.purchasedCancelHandler}
-                        purchaseContinued={this.purchaseContinueHandler} />
+                    {orderSummary}
                 </Modal>
                 <Burger ingredients={this.state.ingredients} />
                 <BuildControls 
@@ -132,4 +168,4 @@ class BurgerBuilder extends Component {
     }
 }
 
-export default BurgerBuilder;
+export default withErrorHandler(BurgerBuilder, axios);
