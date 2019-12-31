@@ -7,11 +7,57 @@ import Input from '../../../components/UI/Input/Input';
 
 class ContactData extends Component {
     state = {
-        name: '',
-        email: '',
-        address: {
-            street: '',
-            postalCode: ''
+        orderForm: {
+            name: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Your Name'
+                },
+                value: ''
+            },
+            street: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Street'
+                },
+                value: ''
+            },
+            zipCode: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Zipcode'
+                },
+                value: ''
+            },
+            country: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Country'
+                },
+                value: ''
+            },
+            email: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'email',
+                    placeholder: 'Your Email'
+                },
+                value: ''
+            },
+            deliveryMethod: {
+                elementType: 'select',
+                elementConfig: {
+                    options: [
+                        {value: 'fastest', displayValue: 'Fastest'},
+                        {value: 'cheapest', displayValue: 'Cheapest'}
+                    ]
+                },
+                value: ''
+            }
         },
         loading: false
     }
@@ -19,23 +65,13 @@ class ContactData extends Component {
     orderHandler = (event) => {
         // prevent to send the request and reload the page
         event.preventDefault();
-        
+
         // In Production, price should be calculated on the server side, to make sure the user
         // is not manipulating the price. Product prices should also be on the server side.
-        this.setState({ loading: true});
+        this.setState({ loading: true });
         const order = {
             ingredients: this.props.ingredients,
-            price: this.props.price,
-            customer: {
-                name: 'Marc Molins',
-                address: {
-                    street: 'Teststreet 15',
-                    zipCode: '12345',
-                    country: 'Catalonia'
-                },
-                email: 'test@test.cat'
-            },
-            deliveryMethod: 'fastest'
+            price: this.props.price
         }
         // Firebase expects json data
         axios.post('/orders.json', order)
@@ -48,15 +84,25 @@ class ContactData extends Component {
             });
     }
 
-    render () {
+    render() {
+        const formElementsArray = [];
+        for (let key in this.state.orderForm) { // key: name, street..
+            formElementsArray.push({
+                id: key,
+                config: this.state.orderForm[key]
+            })
+        }
         let form = (
             <form>
-            <Input inputtype='input' type='text' name='name' placeholder='Your Name' />
-            <Input inputtype='input' type='email' name='email' placeholder='Your Email' />
-            <Input inputtype='input' type='text' name='street' placeholder='Street' />
-            <Input inputtype='input' type='text' name='postal' placeholder='Postal Code' />
-            <Button btnType='Success' clicked={this.orderHandler}>ORDER</Button>
-        </form>
+                {formElementsArray.map(formElement => (
+                    <Input
+                        key={formElement.id} 
+                        elementType={formElement.config.elementType}
+                        elementConfig={formElement.config.elementConfig}
+                        value={formElement.config.value} />
+                ))}
+                <Button btnType='Success' clicked={this.orderHandler}>ORDER</Button>
+            </form>
         );
         if (this.state.loading) {
             form = <Spinner />;
