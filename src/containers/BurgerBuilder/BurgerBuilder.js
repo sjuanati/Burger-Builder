@@ -109,36 +109,12 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
-        this.setState({ loading: true});
-        // In Production, price should be calculated on the server side, to make sure the user
-        // is not manipulating the price. Product prices should also be on the server side.
-        // const order = {
-        //     ingredients: this.state.ingredients,
-        //     price: this.state.totalPrice,
-        //     customer: {
-        //         name: 'Marc Molins',
-        //         address: {
-        //             street: 'Teststreet 15',
-        //             zipCode: '12345',
-        //             country: 'Catalonia'
-        //         },
-        //         email: 'test@test.cat'
-        //     },
-        //     deliveryMethod: 'fastest'
-        // }
-        // // Firebase expects json data
-        // axios.post('/orders.json', order)
-        //     .then(response => {
-        //         this.setState({ loading: false, purchasing: false});
-        //     })
-        //     .catch(error => {
-        //         this.setState({ loading: false, purchasing: false});
-        //     });
-
+    
         const queryParams = [];
         for (let i in this.state.ingredients) {
             queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
         }
+        queryParams.push('price=' + this.state.totalPrice);
         const queryString = queryParams.join('&');
         this.props.history.push({
             pathname: '/checkout',
