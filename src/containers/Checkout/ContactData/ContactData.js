@@ -4,6 +4,7 @@ import styles from './ContactData.module.css';
 import axios from '../../../axios-orders';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
+import input from '../../../components/UI/Input/Input';
 
 class ContactData extends Component {
     state = {
@@ -84,6 +85,21 @@ class ContactData extends Component {
             });
     }
 
+    inputChangedHandler = (event, inputIdentifier) => {
+        const updatedOrderForm = {
+            ...this.state.orderForm
+        };
+        // This is the way to clone nested objects from an object (the get the value)
+        // If we needed any object in elementConfig, another spread would be needed
+        const updatedFormElement = {
+            ...updatedOrderForm[inputIdentifier]
+        };
+        updatedFormElement.value = event.target.value;
+        updatedOrderForm[inputIdentifier] = updatedFormElement;
+        this.setState({orderForm: updatedOrderForm});
+
+    }
+
     render() {
         const formElementsArray = [];
         for (let key in this.state.orderForm) { // key: name, street..
@@ -99,7 +115,8 @@ class ContactData extends Component {
                         key={formElement.id} 
                         elementType={formElement.config.elementType}
                         elementConfig={formElement.config.elementConfig}
-                        value={formElement.config.value} />
+                        value={formElement.config.value}
+                        changed={(event) => this.inputChangedHandler(event, formElement.id)} />
                 ))}
                 <Button btnType='Success' clicked={this.orderHandler}>ORDER</Button>
             </form>
