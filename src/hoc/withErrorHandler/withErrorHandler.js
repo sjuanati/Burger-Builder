@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import Modal from '../../components/UI/Modal/Modal';
 import Aux from '../Aux/Aux';
 
@@ -61,7 +62,7 @@ const withErrorHandler = (WrappedComponent, axios) => {
                         {this.state.error ? this.state.error.message : null}
                     </Modal>
                     <WrappedComponent {...this.props} />
-            </Aux>
+                </Aux>
             )
         }
     }
