@@ -39,6 +39,13 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 ingredients: action.ingredients,
+                // In case we want to keep the order of the ingredients shown
+                // ingredients: {
+                //     salad: action.ingredients.salad,
+                //     bacon: action.ingredients.bacon,
+                //     cheese: action.ingredients.cheese,
+                //     meat: action.ingredients.meat
+                // },
                 error: false        // re-set in case we had an error earlier
             };
         case actionTypes.FETCH_INGREDIENTS_FAILED:
