@@ -14,7 +14,6 @@ import * as actionTypes from '../../store/actions';
 class BurgerBuilder extends Component {
 
     state = {
-        purchasable: false,
         purchasing: false,      // To show/hide modal
         loading: false,         // To show spinner
         error: false            // To render different content
@@ -48,7 +47,7 @@ class BurgerBuilder extends Component {
         .reduce((sum, el) => {
             return sum + el;
         }, 0)
-        this.setState({purchasable: sum > 0});
+        return sum > 0;
     }
 
     // This won't work because only arrow functions capture the state values
@@ -99,7 +98,7 @@ class BurgerBuilder extends Component {
                         ingredientAdded={this.props.onIngredientAdded} 
                         ingredientRemoved={this.props.onIngredientRemoved}
                         disabled={disabledInfo}
-                        purchasable={this.state.purchasable}
+                        purchasable={this.updatePurchaseState(this.props.ings)}
                         ordered={this.purchaseHandler}
                         price={this.props.price} />
                 </Aux>
