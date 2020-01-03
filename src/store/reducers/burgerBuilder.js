@@ -46,6 +46,7 @@ const reducer = (state = initialState, action) => {
                 //     cheese: action.ingredients.cheese,
                 //     meat: action.ingredients.meat
                 // },
+                totalPrice: 4,      // could be retrieved from the server too
                 error: false        // re-set in case we had an error earlier
             };
         case actionTypes.FETCH_INGREDIENTS_FAILED:
