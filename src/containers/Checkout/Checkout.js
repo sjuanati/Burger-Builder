@@ -36,7 +36,7 @@ class Checkout extends Component {
 const mapStateToProps = state => {
     return {
         // property names as defined in the reducer.js
-        ings: state.ingredients
+        ings: state.burgerBuilder.ingredients
     }
 }
 
