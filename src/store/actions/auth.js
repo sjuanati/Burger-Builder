@@ -23,6 +23,21 @@ export const authFail = (error) => {
     }
 };
 
+export const logout = () => {
+    return {
+        type: actionTypes.AUTH_LOGOUT
+    }
+}
+
+// Ensure user is logged out after Firebase expiration time
+export const checkAuthTimeout = (expirationTime) => {
+    return dispatch => {
+        setTimeout(() => {
+            dispatch(logout());
+        }, expirationTime * 1000)
+    }
+}
+
 export const auth = (email, password, isSignup) => {
     return dispatch => {
         dispatch(authStart());
@@ -32,15 +47,16 @@ export const auth = (email, password, isSignup) => {
             returnSecureToken: true
         };
         //sign up
-        let url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAQEUqiXLHa3vgja4BVPB3g_WyHl2CB6bM';
+        let url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCSHqrQlSEu9FsN0dhL-ZNKzOsgb9Zm7FQ';
         if (!isSignup) {
             //sign in
-            url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAQEUqiXLHa3vgja4BVPB3g_WyHl2CB6bM';
+            url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCSHqrQlSEu9FsN0dhL-ZNKzOsgb9Zm7FQ';
         }
         axios.post(url, authData)
             .then(response => {
                 console.log(response);
                 dispatch(authSuccess(response.data.idToken, response.data.localId));
+                dispatch(checkAuthTimeout(response.data.expiresIn));
             })
             .catch(err => {
                 //console.log(err);
