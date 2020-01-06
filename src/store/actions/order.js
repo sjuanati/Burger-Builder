@@ -64,10 +64,12 @@ export const fetchOrdersStart = () => {
     }
 };
 
-export const fetchOrders = (token) => {
+export const fetchOrders = (token, userId) => {
     return dispatch => {
         dispatch(fetchOrdersStart());   // to show the spinner
-        axios.get('/orders.json?auth=' + token)
+        //This query requires an index on Firebase's Real-Time DB (".indexOn": ["userId"])
+        const queryParams = '?auth=' + token + '&orderBy="userId"&equalTo="' + userId + '"';
+        axios.get('/orders.json' + queryParams)
         .then(res => {
             // To keep the IDs and the data into an array:
             const fetchedOrders = [];

@@ -42,9 +42,7 @@ class App extends Component {
     return (
       <div>
         <Layout>
-          <Switch>
-            {routes}
-          </Switch>
+          {routes}
         </Layout>
       </div>
     );
