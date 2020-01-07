@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 import * as actionTypes from './actionTypes';
-import { checkPropTypes } from 'prop-types';
 
 export const authStart = () => {
     return {
