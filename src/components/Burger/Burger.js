@@ -9,8 +9,6 @@ import styles from './Burger.module.css';
 
 const burger = (props) => {
 
-    console.log(props);
-
     // Transform object into array of ingredients
     let transformedIngredients = Object.keys(props.ingredients)
     .map(ingKey => {
